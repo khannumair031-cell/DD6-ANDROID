@@ -1,0 +1,35 @@
+name: Build DD6 APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'Digital_Delay_6_Android_Studio.zip'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract project ZIP
+        run: |
+          unzip -o Digital_Delay_6_Android_Studio.zip -d project
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build APK
+        run: |
+          cd project
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: DD6-APK
+          path: project/app/build/outputs/apk/debug/*.apk
